@@ -1,4 +1,4 @@
-package traefik_vault_auth
+package traefik_vault_ldap_auth
 
 import (
 	"context"

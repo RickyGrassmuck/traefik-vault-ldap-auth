@@ -38,10 +38,10 @@ experimental:
     middlewares:
       my-traefik-vault-auth:
         plugin:
-          traefik-vault-auth:
+          traefik-vault-ldap-auth:
             customRealm: Use a valid Vault user to authenticate
             vault:
-              address: http://127.0.0.1:8200
+              address: https://127.0.0.1:8200
               mount_name: ldap
               add_token_header: true
 ```
