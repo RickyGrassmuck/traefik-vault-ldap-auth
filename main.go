@@ -22,6 +22,8 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 	}, nil
 }
 
+// Use traefiks basic auth middleware as a guide
+// https://github.com/traefik/traefik/blob/master/pkg/middlewares/auth/basic_auth.go
 func (va *VaultAuth) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	var vaultToken string
 	var err error
