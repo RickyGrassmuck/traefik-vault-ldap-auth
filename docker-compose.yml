@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--pilot.token=${TRAEFIK_PILOT_TOKEN}"
+      - "--experimental.devPlugin.goPath=/plugins/go"
+      - "--experimental.devPlugin.moduleName=github.com/rigrassm/traefik-vault-auth"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./:/plugins/go/src/github.com/rigrassm/traefik-vault-auth"
+
+  #------------------------------------------------------------------------------
+  # Secured application using plugin
+  # NOTE: Users 'admin' and 'developer' can access this app
+  #------------------------------------------------------------------------------
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.middlewares=vault-auth"
+      - "traefik.http.middlewares.vault-auth.plugin.dev.vault.address=${VAULT_ADDR}"
+      - "traefik.http.middlewares.vault-auth.plugin.dev.vault.mount_path=${VAULT_AUTH_MOUNT_NAME}"

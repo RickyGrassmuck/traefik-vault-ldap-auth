@@ -1,0 +1,11 @@
+displayName: Traefik Vault LDAP Auth
+type: middleware
+import: github.com/rigrassm/traefik-vault-ldap-auth
+summary: Traefik Basic Auth middleware backed by Vault LDAP authentication 
+iconPath: assets/vaulticon.svg
+testData:
+  customRealm: "Vault LDAP Authentication Credentials"
+  vault:
+    address: "https://127.0.0.1:8200"
+    mount_name: "ldap"
+    add_token_header: true
